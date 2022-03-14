@@ -10,6 +10,12 @@
 #include <signal.h>
 #include <sys/signalfd.h>
 #include <sys/stat.h>
+/* for time functions */
+#include <iostream>
+#include <iomanip>
+#include <ctime>
+#include <sstream>
+
 
 #include "core/libcamera_encoder.hpp"
 #include "output/output.hpp"
@@ -259,9 +265,14 @@ static void event_loop(LibcameraMotionDetectApp &app)
 				std::cerr <<"motion detected boyo" << std::endl;
 				app.StopCamera();
 				app.Teardown();
-				//output.release();
+				// Get the current time
+				auto t = std::time(nullptr);
+                auto tm = *std::localtime(&t);
+				std::ostringstream oss;
+    			oss << std::put_time(&tm, "%Y-%m-%d_%H-%M-%S");
+    			auto datentime = oss.str();
 				std::string filename = options->savedir;
-				filename.append("/motionmov-").append(std::to_string(movie_num)).append(".h264");
+				filename.append("/").append(datentime).append("-motionmov.h264");
 				options->output = filename;
 				output = std::unique_ptr<Output>(Output::Create(options));
 				app.SetEncodeOutputReadyCallback(std::bind(&Output::OutputReady, output.get(), _1, _2, _3, _4));
@@ -299,7 +310,7 @@ static void event_loop(LibcameraMotionDetectApp &app)
 
 int main(int argc, char *argv[])
 {
-	std::cout << "hello there!" << "\n";
+	std::cerr << "hello there!" << "\n";
 	try
 	{
 		LibcameraMotionDetectApp app;
