@@ -20,7 +20,15 @@ project(libcamera-jpeg)
 add_executable(libcamera-jpeg libcamera_jpeg.cpp)
 target_link_libraries(libcamera-jpeg libcamera_app images)
 
-set(EXECUTABLES libcamera-still libcamera-vid libcamera-hello libcamera-raw libcamera-jpeg)
+project(libcamera-motion)
+add_executable(libcamera-motion libcamera_motion.cpp)
+target_link_libraries(libcamera-motion libcamera_app encoders outputs images)
+
+project(libcamera-motionvid)
+add_executable(libcamera-motionvid libcamera_motionvid.cpp)
+target_link_libraries(libcamera-motionvid libcamera_app encoders outputs images)
+
+set(EXECUTABLES libcamera-still libcamera-vid libcamera-hello libcamera-raw libcamera-jpeg libcamera-motion)
 
 if (ENABLE_TFLITE)
     project(libcamera-detect)
