@@ -28,17 +28,21 @@ struct MotionDetectOptions : public VideoOptions
 		options_.add_options()
 			("minframes", value<unsigned int>(&minframes)->default_value(50), "Minimum number of frames for a capture")
 			("gap", value<unsigned int>(&gap)->default_value(20), "Smallest gap between captures in frames")
+			("savedir", value<std::string>(&savedir), "Directory to save files")
 			;
 	}
 
 	unsigned int minframes;
 	unsigned int gap;
+	std::string savedir;
+
 
 	virtual void Print() const override
 	{
 		VideoOptions::Print();
 		std::cerr << "    minframes: " << minframes << std::endl;
 		std::cerr << "    gap: " << gap << std::endl;
+		std::cerr << "    savedir: " << savedir << std::endl;
 	}
 };
 
@@ -256,9 +260,8 @@ static void event_loop(LibcameraMotionDetectApp &app)
 				app.StopCamera();
 				app.Teardown();
 				//output.release();
-				std::string filename = "motionmov-";
-			    filename.append(std::to_string(movie_num));
-			    filename.append(".h264");
+				std::string filename = options->savedir;
+				filename.append("/motionmov-").append(std::to_string(movie_num)).append(".h264");
 				options->output = filename;
 				output = std::unique_ptr<Output>(Output::Create(options));
 				app.SetEncodeOutputReadyCallback(std::bind(&Output::OutputReady, output.get(), _1, _2, _3, _4));
