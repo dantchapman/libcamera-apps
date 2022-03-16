@@ -274,6 +274,7 @@ static void event_loop(LibcameraMotionDetectApp &app)
 				std::string filename = options->savedir;
 				filename.append("/").append(datentime).append("-motionmov.h264");
 				options->output = filename;
+				output.release();
 				output = std::unique_ptr<Output>(Output::Create(options));
 				app.SetEncodeOutputReadyCallback(std::bind(&Output::OutputReady, output.get(), _1, _2, _3, _4));
 				app.ConfigureVideo(get_colourspace_flags(options->codec));
@@ -288,6 +289,7 @@ static void event_loop(LibcameraMotionDetectApp &app)
 				std::cerr <<"motion ended boyo" << std::endl;
 				app.StopCamera();
 				app.Teardown();
+				output.release();
 				options->output = origoutput;
 				output = std::unique_ptr<Output>(Output::Create(options));
 				app.SetEncodeOutputReadyCallback(std::bind(&Output::OutputReady, output.get(), _1, _2, _3, _4));
